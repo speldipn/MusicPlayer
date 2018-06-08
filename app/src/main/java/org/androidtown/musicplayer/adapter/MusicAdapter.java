@@ -51,6 +51,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
     this.list = list;
   }
 
+  public void release() {
+    if(mp != null) {
+      mp.release();
+    }
+  }
+
   public class Holder extends RecyclerView.ViewHolder {
     ImageView image;
     TextView tvTitle;

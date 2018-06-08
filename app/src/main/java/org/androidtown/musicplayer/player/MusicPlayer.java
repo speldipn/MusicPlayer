@@ -50,4 +50,9 @@ public class MusicPlayer {
     }
   }
 
+  public void release() {
+    if(mediaPlayer != null) {
+      mediaPlayer.release();
+    }
+  }
 }

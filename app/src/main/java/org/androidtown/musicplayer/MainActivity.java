@@ -10,8 +10,9 @@ import org.androidtown.musicplayer.adapter.MusicAdapter;
 import org.androidtown.musicplayer.domain.MusicLoader;
 
 public class MainActivity extends BaseActivity {
-
   RecyclerView recyclerView;
+  MusicLoader loader;
+  MusicAdapter adapter;
 
   // 필요한 권한
   private static String[] permissions = {
@@ -31,10 +32,18 @@ public class MainActivity extends BaseActivity {
   public void init() {
     setContentView(R.layout.activity_main);
     recyclerView = findViewById(R.id.recyclerView);
-    MusicLoader loader = new MusicLoader(this);
-    MusicAdapter adapter = new MusicAdapter();
+    loader = new MusicLoader(this);
+    adapter = new MusicAdapter();
     adapter.setData(loader.getList());
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if(adapter != null) {
+      adapter.release();
+    }
   }
 }
