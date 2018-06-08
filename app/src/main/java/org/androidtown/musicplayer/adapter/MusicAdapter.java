@@ -66,6 +66,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
       btnPlay.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+          for(int i = 0; i < list.size(); ++i) {
+            Music m = list.get(i);
+            if(m.id != music.id) {
+
+            }
+          }
           btnPlay.setVisibility(View.GONE);
           btnStop.setVisibility(View.VISIBLE);
           musicPlayer.set(itemView.getContext(), music.musicUri);

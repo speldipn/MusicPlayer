@@ -14,7 +14,7 @@ public class MainActivity extends BaseActivity {
   RecyclerView recyclerView;
 
   // 필요한 권한
-  private static String permissions[] = {
+  private static String[] permissions = {
     Manifest.permission.READ_EXTERNAL_STORAGE
   };
 

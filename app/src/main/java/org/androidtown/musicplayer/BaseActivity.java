@@ -30,12 +30,16 @@ public abstract class BaseActivity extends AppCompatActivity {
   // 1. 권한체크
   @TargetApi(Build.VERSION_CODES.M)
   private void checkPermission() {
+    boolean ok = true;
     for(int i = 0; i < permission.length; ++i) {
       if(checkSelfPermission(permission[i]) != PackageManager.PERMISSION_GRANTED) {
         requestPermissions(permission, REQ_PERM);
+        ok = false;
       }
     }
-    init();
+    if(ok) {
+      init();
+    }
   }
 
   public abstract void init();
