@@ -1,5 +1,6 @@
 package org.androidtown.musicplayer.adapter;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -18,8 +19,11 @@ import org.androidtown.musicplayer.player.MusicPlayer;
 import java.util.List;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
-  List<Music> list;
-  MusicPlayer musicPlayer;
+  private List<Music> list;
+  private MusicPlayer mp;
+  private ImageButton prevBtnPlay = null;
+  private ImageButton prevBtnStop = null;
+  private boolean pushedPlay = false;
 
   @NonNull
   @Override
@@ -56,37 +60,47 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
     ImageButton btnStop;
     Music music;
 
-    public Holder(final View itemView) {
-      super(itemView);
-      image = itemView.findViewById(R.id.imgAlbumart);
-      tvTitle = itemView.findViewById(R.id.textTitle);
-      tvArtist = itemView.findViewById(R.id.textArtist);
-      tvDuration = itemView.findViewById(R.id.textDuration);
-      btnPlay = itemView.findViewById(R.id.btnPlay);
+    public Holder(final View v) {
+      super(v);
+      image = v.findViewById(R.id.imgAlbumart);
+      tvTitle = v.findViewById(R.id.textTitle);
+      tvArtist = v.findViewById(R.id.textArtist);
+      tvDuration = v.findViewById(R.id.textDuration);
+      btnPlay = v.findViewById(R.id.btnPlay);
       btnPlay.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          for(int i = 0; i < list.size(); ++i) {
-            Music m = list.get(i);
-            if(m.id != music.id) {
-
-            }
+          if(prevBtnStop != null && pushedPlay) {
+            prevBtnStop.setVisibility(View.GONE);
+            prevBtnPlay.setVisibility(View.VISIBLE);
           }
           btnPlay.setVisibility(View.GONE);
           btnStop.setVisibility(View.VISIBLE);
-          musicPlayer.set(itemView.getContext(), music.musicUri);
-          musicPlayer.play();
+          prevBtnPlay = btnPlay;
+          prevBtnStop = btnStop;
+          play(v.getContext(), music.musicUri);
         }
       });
-      btnStop = itemView.findViewById(R.id.btnStop);
+      btnStop = v.findViewById(R.id.btnStop);
       btnStop.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           btnStop.setVisibility(View.GONE);
           btnPlay.setVisibility(View.VISIBLE);
-          musicPlayer.stop();
+          stop();
         }
       });
+    }
+
+    public void play(Context ctx, Uri musicUri) {
+      mp.set(ctx, music.musicUri);
+      mp.play();
+      pushedPlay = true;
+    }
+
+    public void stop() {
+      mp.stop();
+      pushedPlay = false;
     }
   }
 }

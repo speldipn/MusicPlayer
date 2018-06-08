@@ -21,6 +21,8 @@ public class Music {
     this.artist = artist;
     this.albumid = albumid;
     this.duration = duration;
+    this.musicUri = null;
+    this.albumartUri = null;
   }
 
   public void update() {
