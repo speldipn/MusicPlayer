@@ -55,4 +55,11 @@ public class MusicPlayer {
       mediaPlayer.release();
     }
   }
+
+  public int duration() {
+    if(mediaPlayer != null) {
+      return mediaPlayer.getCurrentPosition();
+    }
+    return (-1);
+  }
 }

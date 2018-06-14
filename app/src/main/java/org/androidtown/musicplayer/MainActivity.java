@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity {
     setContentView(R.layout.activity_main);
     recyclerView = findViewById(R.id.recyclerView);
     loader = new MusicLoader(this);
-    adapter = new MusicAdapter();
+    adapter = new MusicAdapter(this);
     adapter.setData(loader.getList());
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -42,8 +42,8 @@ public class MainActivity extends BaseActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if(adapter != null) {
-      adapter.release();
-    }
+//    if(adapter != null) {
+//      adapter.release();
+//    }
   }
 }

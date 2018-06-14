@@ -1,29 +1,38 @@
 package org.androidtown.musicplayer.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.androidtown.musicplayer.MainActivity;
 import org.androidtown.musicplayer.R;
 import org.androidtown.musicplayer.domain.Music;
 import org.androidtown.musicplayer.player.MusicPlayer;
+import org.androidtown.musicplayer.player.Player;
 
 import java.util.List;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
   private List<Music> list;
   private MusicPlayer mp;
-  private ImageButton prevBtnPlay = null;
-  private ImageButton prevBtnStop = null;
-  private boolean pushedPlay = false;
+  private MainActivity mainActivity;
+
+  public MusicAdapter(Context ctx) {
+    this.mainActivity = (MainActivity)ctx;
+  }
 
   @NonNull
   @Override
@@ -40,6 +49,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
     holder.tvDuration.setText((duration / 60) + "m:" + (duration % 60) + "s");
     holder.image.setImageURI(music.albumartUri);
     holder.music = music;
+    holder.position = position;
   }
 
   @Override
@@ -51,20 +61,14 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
     this.list = list;
   }
 
-  public void release() {
-    if(mp != null) {
-      mp.release();
-    }
-  }
-
   public class Holder extends RecyclerView.ViewHolder {
     ImageView image;
     TextView tvTitle;
     TextView tvArtist;
     TextView tvDuration;
-    ImageButton btnPlay;
-    ImageButton btnStop;
     Music music;
+    ConstraintLayout layout;
+    int position;
 
     public Holder(final View v) {
       super(v);
@@ -72,41 +76,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
       tvTitle = v.findViewById(R.id.textTitle);
       tvArtist = v.findViewById(R.id.textArtist);
       tvDuration = v.findViewById(R.id.textDuration);
-      btnPlay = v.findViewById(R.id.btnPlay);
-      btnPlay.setOnClickListener(new View.OnClickListener() {
+      layout = v.findViewById(R.id.layoutItem);
+      layout.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          if(prevBtnStop != null && pushedPlay) {
-            prevBtnStop.setVisibility(View.GONE);
-            prevBtnPlay.setVisibility(View.VISIBLE);
-          }
-          btnPlay.setVisibility(View.GONE);
-          btnStop.setVisibility(View.VISIBLE);
-          prevBtnPlay = btnPlay;
-          prevBtnStop = btnStop;
-          play(v.getContext(), music.musicUri);
+          Intent intent = new Intent(v.getContext(), Player.class);
+          intent.putExtra(Player.MUSIC_KEY, position);
+          mainActivity.startActivityForResult(intent, Player.REQ_MUSIC);
         }
       });
-      btnStop = v.findViewById(R.id.btnStop);
-      btnStop.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          btnStop.setVisibility(View.GONE);
-          btnPlay.setVisibility(View.VISIBLE);
-          stop();
-        }
-      });
-    }
-
-    public void play(Context ctx, Uri musicUri) {
-      mp.set(ctx, music.musicUri);
-      mp.play();
-      pushedPlay = true;
-    }
-
-    public void stop() {
-      mp.stop();
-      pushedPlay = false;
     }
   }
 }
