@@ -27,7 +27,6 @@ import java.util.List;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.Holder> {
   private List<Music> list;
-  private MusicPlayer mp;
   private MainActivity mainActivity;
 
   public MusicAdapter(Context ctx) {

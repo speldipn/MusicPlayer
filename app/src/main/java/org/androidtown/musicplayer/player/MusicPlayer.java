@@ -51,15 +51,28 @@ public class MusicPlayer {
   }
 
   public void release() {
-    if(mediaPlayer != null) {
+    if (mediaPlayer != null) {
       mediaPlayer.release();
     }
   }
 
   public int duration() {
-    if(mediaPlayer != null) {
+    if (mediaPlayer != null) {
       return mediaPlayer.getCurrentPosition();
     }
     return (-1);
+  }
+
+  public void seekTo(int msec) {
+    if (mediaPlayer != null) {
+      mediaPlayer.seekTo(msec);
+    }
+  }
+
+  public int getMax() {
+    if (mediaPlayer != null) {
+      return mediaPlayer.getDuration();
+    }
+    return -1;
   }
 }

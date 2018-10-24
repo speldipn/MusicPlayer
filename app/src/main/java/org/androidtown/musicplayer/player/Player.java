@@ -54,19 +54,22 @@ public class Player extends AppCompatActivity {
     list = musicLoader.getList();
     playerAdapter = new PlayerAdapter(list);
     viewPager.setAdapter(playerAdapter);
-    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
       @Override
       public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
       }
 
       @Override
-      public void onPageSelected(int position) {
+      public void onPageSelected(int pos) {
+        position = pos;
       }
 
       @Override
       public void onPageScrollStateChanged(int state) {
-
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+          btnStop.callOnClick();
+          btnPlay.callOnClick();
+        }
       }
     });
 
@@ -89,21 +92,38 @@ public class Player extends AppCompatActivity {
 
     // seekBar
     seekBar = findViewById(R.id.seekBar);
+    seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+      }
 
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        mp.seekTo(seekBar.getProgress());
+      }
+    });
+  }
+
+  public void runDurationThread() {
     // TODO: PLAY 로 옮겨야함
     threadDuration = new Thread(new Runnable() {
       @Override
       public void run() {
-        Music music = (Music)list.get(position);
-        int totalDuration = (int)music.duration;
+        Music music = (Music) list.get(position);
+        int totalDuration = (int) music.duration;
         seekBar.setMax(totalDuration);
         do {
           int duration = mp.duration();
-          if(duration == (-1)) {
+          if (duration == (-1)) {
             break;
           }
           seekBar.setProgress(duration);
-        }while(isPlaying == true && mp.duration() <= totalDuration);
+        } while (isPlaying == true && mp.duration() <= totalDuration);
       }
     });
     threadDuration.start();
@@ -112,12 +132,20 @@ public class Player extends AppCompatActivity {
   public void play(Context ctx, Uri musicUri) {
     mp.set(ctx, musicUri);
     mp.play();
+
     isPlaying = true;
+    runDurationThread();
   }
 
   public void stop() {
     mp.stop();
+
     isPlaying = false;
+    try {
+      threadDuration.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   public void release() {
@@ -127,6 +155,7 @@ public class Player extends AppCompatActivity {
   }
 
   public void command(View v) {
+    int pos = 0;
     Music music = (Music) list.get(position);
     switch (v.getId()) {
       case R.id.btnPlay:
@@ -140,12 +169,18 @@ public class Player extends AppCompatActivity {
         stop();
         break;
       case R.id.btnForward:
+        mp.seekTo((mp.duration() + 5000) <= mp.getMax() ? mp.duration() + 5000 : mp.getMax());
         break;
       case R.id.btnReward:
+        mp.seekTo(mp.duration() > 5000 ? mp.duration() - 5000 : 0);
         break;
       case R.id.btnPresious:
+        pos = (position > 0) ? position - 1 : position;
+        viewPager.setCurrentItem(pos);
         break;
       case R.id.btnNext:
+        pos = (position < list.size() - 1) ? position + 1 : position;
+        viewPager.setCurrentItem(pos);
         break;
     }
   }
